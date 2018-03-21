@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.WagonException;
+import org.codehaus.mojo.wagon.shared.http.Nexus3DownloadBaseDirectory;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -40,7 +41,7 @@ public class DefaultWagonDownload
         throws WagonException
     {
         logger.info( "Scanning remote file system: " + wagon.getRepository().getUrl() + " ..." );
-
+        
         WagonDirectoryScanner dirScan = new WagonDirectoryScanner();
         dirScan.setLogger( logger );
         dirScan.setWagon( wagon );
@@ -54,22 +55,31 @@ public class DefaultWagonDownload
         }
 
         dirScan.scan();
-
+        
         return dirScan.getFilesIncluded();
     }
 
+    private String getDownloadUrl(Wagon wagon) {
+    	if (wagon instanceof Nexus3DownloadBaseDirectory) {
+        	Nexus3DownloadBaseDirectory dir = (Nexus3DownloadBaseDirectory) wagon;
+        	return dir.getSourceBaseUrl() + "/";
+        } else {
+        	return wagon.getRepository().getUrl() + "/";
+        }
+    }
+    
     public void download( Wagon wagon, WagonFileSet remoteFileSet, Log logger )
         throws WagonException
     {
         List fileList = this.getFileList( wagon, remoteFileSet, logger );
-
-        String url = wagon.getRepository().getUrl() + "/";
 
         if ( fileList.size() == 0 )
         {
             logger.info( "Nothing to download." );
             return;
         }
+
+        String url = getDownloadUrl(wagon);
 
         for ( Iterator iterator = fileList.iterator(); iterator.hasNext(); )
         {

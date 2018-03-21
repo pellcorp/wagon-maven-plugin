@@ -45,5 +45,4 @@ public class MergeMavenRepoMojo
     {
         mavenRepoMerger.merge( srcWagon, targetWagon, optimize, this.getLog() );
     }
-
 }

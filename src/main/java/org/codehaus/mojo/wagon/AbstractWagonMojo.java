@@ -27,6 +27,7 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.wagon.Wagon;
 import org.codehaus.mojo.wagon.shared.WagonFileSet;
 import org.codehaus.mojo.wagon.shared.WagonUtils;
+import org.codehaus.mojo.wagon.shared.http.LightweightHttpWagon;
 
 /**
  * Provides base functionality for dealing with I/O using wagon.
@@ -34,7 +35,13 @@ import org.codehaus.mojo.wagon.shared.WagonUtils;
 public abstract class AbstractWagonMojo
     extends AbstractMojo
 {
-
+	/**
+     * The nexus 3 html base url to the source repository.
+     * 
+     * @parameter property="wagon.source.nexus3.baseUrl"
+     */
+    protected String nexus3BaseUrl;
+    
     /**
      * @component
      */
@@ -74,12 +81,20 @@ public abstract class AbstractWagonMojo
      * @return
      * @throws MojoExecutionException
      */
-    protected Wagon createWagon( String id, String url )
+    protected Wagon createWagon( String id, String url, boolean isSource )
         throws MojoExecutionException
     {
         try
         {
-            return WagonUtils.createWagon( id, url, wagonManager, settings, this.getLog() );
+        	Wagon wagon = WagonUtils.createWagon( id, url, wagonManager, settings, this.getLog() );
+        	
+        	if (isSource && nexus3BaseUrl != null && url.startsWith("http://")) {
+        		LightweightHttpWagon httpWagon = new LightweightHttpWagon(nexus3BaseUrl);
+        		httpWagon.init(wagon);
+        		return httpWagon;
+        	} else {
+        		return wagon;
+        	}
         }
         catch ( Exception e )
         {

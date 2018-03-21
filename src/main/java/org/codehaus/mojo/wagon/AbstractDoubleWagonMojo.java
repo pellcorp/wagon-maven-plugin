@@ -25,7 +25,8 @@ package org.codehaus.mojo.wagon;
 public abstract class AbstractDoubleWagonMojo
     extends AbstractWagonMojo
 {
-
+	
+    
     /**
      * The URL to the source repository.
      * 

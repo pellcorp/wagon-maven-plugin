@@ -48,8 +48,8 @@ public abstract class AbstractCopyMojo
 
         try
         {
-            srcWagon = createWagon( sourceId, source );
-            targetWagon = createWagon( targetId, target );
+            srcWagon = createWagon( sourceId, source, true );
+            targetWagon = createWagon( targetId, target, false );
             copy( srcWagon, targetWagon );
         }
         catch ( Exception e )

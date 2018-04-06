@@ -298,8 +298,9 @@ public class WagonDirectoryScanner
 
         for ( Iterator iterator = files.iterator(); iterator.hasNext(); )
         {
+        	
             String fileName = (String) iterator.next();
-
+            
             if ( isRidiculousFile( fileName ) ) // including ".."
             {
                 continue;

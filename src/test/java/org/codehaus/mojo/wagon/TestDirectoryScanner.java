@@ -1,5 +1,6 @@
 package org.codehaus.mojo.wagon;
 import java.io.File;
+import java.util.List;
 
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.wagon.authentication.AuthenticationInfo;
@@ -25,19 +26,23 @@ public class TestDirectoryScanner {
         
         String[] includes = { "**" };
         srcFileSet.setIncludes(includes);
-        
-        String[] excludes = { ".*/**", "archetype-catalog.xml*" };
+        String[] excludes = { ".*/**", 
+        		"archetype-catalog.xml*",
+        		"*resolver-status.properties",
+        		"*maven-metadata-local*.xml*",
+        		"*maven-metadata-deployment*.xml*",
+        		"*maven-metadata-repositoryIdentifier*.xml*"};
         srcFileSet.setExcludes( excludes );
         
         Repository repository = new Repository(
         		"repository", 
-        		"http://10.1.21.177:8082/nexus/service/rest/repository/browse/maven-staging-migration-tool-1.29.7");
+        		"http://10.1.21.177:8081/service/rest/repository/browse/maven-staging-migration-tool-1.29.7");
         
         AuthenticationInfo authInfo = new AuthenticationInfo();
         authInfo.setUserName("admin");
         authInfo.setPassword("admin123");
 
-        LightweightHttpWagon wagon = new LightweightHttpWagon("http://10.1.21.177:8082/nexus/repository/maven-staging-migration-tool-1.29.7");
+        LightweightHttpWagon wagon = new LightweightHttpWagon("http://10.1.21.177:8081/repository/maven-staging-migration-tool-1.29.7");
         
         wagon.connect(repository, authInfo, new ProxyInfoProvider() {
             public ProxyInfo getProxyInfo( String protocol ) {
@@ -45,6 +50,10 @@ public class TestDirectoryScanner {
             }
         });
 
-        downloader.download( wagon, srcFileSet, logger );
+        //downloader.download( wagon, srcFileSet, logger );
+        List<String> files = downloader.getFileList(wagon, srcFileSet, logger);
+        for (String file : files) {
+        	System.out.println(file);
+        }
 	}
 }

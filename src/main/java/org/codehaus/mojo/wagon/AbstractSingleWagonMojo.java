@@ -60,7 +60,7 @@ public abstract class AbstractSingleWagonMojo
         Wagon wagon = null;
         try
         {
-            wagon = createWagon( serverId, url, false );
+            wagon = createWagon( serverId, url, true );
             execute( wagon );
         }
         catch ( WagonException e )

@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>wagon-maven-plugin</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.1-veda</version>
   <packaging>maven-plugin</packaging>
   <name>Maven Wagon plugin</name>
 

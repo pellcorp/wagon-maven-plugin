@@ -65,14 +65,15 @@ public class DefaultMavenRepoMerger
     public void merge( Wagon src, Wagon target, boolean optimize, Log logger )
         throws WagonException, IOException
     {
-
         // copy src to a local dir
         File downloadSrcDir = createTempDirectory( "wagon-maven-plugin" );
 
         WagonFileSet srcFileSet = new WagonFileSet();
         srcFileSet.setDownloadDirectory( downloadSrcDir );
         // ignore archiva/nexus .index at root dir
-        String[] excludes = { ".*/**", "archetype-catalog.xml*" };
+        String[] excludes = { ".*/**", "archetype-catalog.xml*", 
+        		"**/maven-metadata-repositoryIdentifier.xml*", 
+        		"**/resolver-status.properties*" };
         srcFileSet.setExcludes( excludes );
 
         try
@@ -113,12 +114,12 @@ public class DefaultMavenRepoMerger
 
             }
 
+            
             // upload to target
             FileSet tobeUploadedFileSet = new FileSet();
             tobeUploadedFileSet.setDirectory( downloadSrcDir.getAbsolutePath() );
 
             this.uploader.upload( target, tobeUploadedFileSet, optimize, logger );
-
         }
         finally
         {
@@ -127,7 +128,7 @@ public class DefaultMavenRepoMerger
 
     }
 
-    private void mergeMetadata( File existingMetadata, Log logger )
+    public void mergeMetadata( File existingMetadata, Log logger )
         throws IOException, XmlPullParserException
     {
 
@@ -157,7 +158,6 @@ public class DefaultMavenRepoMerger
             xppWriter.write( stagedMetadataWriter, existing );
 
             logger.info( "Merging metadata file: " + stagedMetadataFile );
-
         }
         finally
         {
